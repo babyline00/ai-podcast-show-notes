@@ -1,0 +1,30 @@
+// AI Podcast Show Notes Generator — Prisma schema
+// SQLite is used as the local-first store. All generated artifacts (chapters,
+// quotes, guest bios, tweet thread, SEO tags) are JSON-serialized into TEXT
+// columns so we don't need extra relation tables for the MVP.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Episode {
+  id          String   @id @default(cuid())
+  title       String
+  podcastName String?
+  audioPath   String?
+  transcript  String
+  chapters    String   // JSON array of { startSec, endSec, title? }
+  quotes      String   // JSON array of { text, timestampSec }
+  guestBios   String   // JSON array of { name, bio }
+  tweetThread String   // JSON array of { kind, text }
+  seoTags     String   // JSON array of strings
+  durationSec Int?
+  status      String   @default("processing")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
